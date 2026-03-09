@@ -1,9 +1,0 @@
-{
-    "name": "Java 17 + Docker",
-    "image": "mcr.microsoft.com/devcontainers/java:17",
-    "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {
-            "version": "latest"
-        }
-    }
-}
