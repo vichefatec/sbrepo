@@ -8,18 +8,22 @@ import org.springframework.stereotype.Service;
 import com.fatecpg.exemplopers.model.ExperienciaProfissional;
 import com.fatecpg.exemplopers.model.Funcionario;
 import com.fatecpg.exemplopers.model.Pessoa;
+import com.fatecpg.exemplopers.model.Promocao;
 import com.fatecpg.exemplopers.repository.ExperienciaProfissionalRepository;
 import com.fatecpg.exemplopers.repository.PessoaRepository;
+import com.fatecpg.exemplopers.repository.PromocaoRepository;
 
 @Service
 public class PessoaService {
     
     private final PessoaRepository pessoaRepository;
     private final ExperienciaProfissionalRepository experienciaProfissionalRepository;
+    private final PromocaoRepository promocaoRepository;
 
-    public PessoaService(PessoaRepository pessoaRepository, ExperienciaProfissionalRepository experienciaProfissionalRepository) {
+    public PessoaService(PessoaRepository pessoaRepository, ExperienciaProfissionalRepository experienciaProfissionalRepository, PromocaoRepository promocaoRepository) {
         this.pessoaRepository = pessoaRepository;
         this.experienciaProfissionalRepository = experienciaProfissionalRepository;
+        this.promocaoRepository = promocaoRepository;
     }
 
     public Pessoa salvarPessoa(Pessoa pessoa) {
@@ -61,5 +65,16 @@ public class PessoaService {
                 return experienciaProfissionalRepository.save(existingEp);
             });
         return ep;
+    }
+
+    public Optional<Promocao> updatePromocao(Long funcionarioId, Long promocaoId, Promocao novopro) {
+        Optional<Promocao> pro = 
+            promocaoRepository.findByIdAndFuncionarioId(promocaoId, funcionarioId)
+            .map(existingPro -> {
+                existingPro.setDataPromocao(novopro.getDataPromocao());
+                existingPro.setNovoSalario(novopro.getNovoSalario());
+                return promocaoRepository.save(existingPro);
+            });
+        return pro;
     }
 }

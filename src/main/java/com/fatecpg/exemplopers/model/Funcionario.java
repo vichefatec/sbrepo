@@ -36,9 +36,19 @@ public class Funcionario extends Pessoa {
     @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExperienciaProfissional> experienciaProfissional = new ArrayList<>();
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Promocao> promocao = new ArrayList<>();
+
     @JsonIgnore
     public void addExperienciaProfissional(ExperienciaProfissional ep) {
         this.experienciaProfissional.add(ep);
         ep.setFuncionario(this);
+    }
+
+    @JsonIgnore
+    public void addPromocao(Promocao pro) {
+        this.promocao.add(pro);
+        pro.setFuncionario(this);
     }
 }

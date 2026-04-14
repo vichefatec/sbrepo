@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fatecpg.exemplopers.model.ExperienciaProfissional;
 import com.fatecpg.exemplopers.model.Funcionario;
 import com.fatecpg.exemplopers.model.Pessoa;
+import com.fatecpg.exemplopers.model.Promocao;
 import com.fatecpg.exemplopers.repository.ExperienciaProfissionalRepository;
 import com.fatecpg.exemplopers.service.PessoaService;
 
@@ -79,4 +80,34 @@ public class FuncionarioController {
             .map(xep -> ResponseEntity.ok(xep))
             .orElse(ResponseEntity.notFound().build());
     }
+
+    // Requisição POST. {id} é o id fo funcionário que terá objeto Promocao adicionado.
+    @PostMapping("/funcionarios/{id}/promocao")
+    public ResponseEntity<Funcionario> addPromocao(
+            @PathVariable Long id,        //id do funcionário 
+            @RequestBody Promocao pro) {  //objeto Promoção proveniente do Cliente
+        Optional<Pessoa> funcionario = 
+            pessoaService.findFuncionarioById(id) // busca funcionario pelo id
+            .map(f -> {                   // processa funcionario se encontrado
+                f.addPromocao(pro);
+                f.setSalario(pro.getNovoSalario());
+                return pessoaService.updatePessoa(id, f);
+            })
+            .orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
+        // retorna JSON com os dados do funcionário com promoção adicionada
+        return ResponseEntity.ok((Funcionario)funcionario.get());
+    }
+
+    // Atualiza promoção - {id} é o id do usuário, {proid} é o id da Promocao
+    @PutMapping("/funcionarios/{id}/promocao/{proid}")
+    public ResponseEntity<Promocao> updatePromocao(
+        @PathVariable Long id,     // id do funcionario
+        @PathVariable Long proid,  // id da Promocao
+        @RequestBody Promocao pro) // Promocao com novos dados
+    {
+        return pessoaService.updatePromocao(id, proid, pro)
+            .map(xpro -> ResponseEntity.ok(xpro))
+            .orElse(ResponseEntity.notFound().build());
+    }
+
 }
